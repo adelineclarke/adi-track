@@ -8,9 +8,667 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/babel" src="app.js"></script>
+  <script type="text/babel">
+    const { Plus, Clock, Coffee, Sun, Moon } = lucide;
+
+    function HealthTracker() {
+      // Morning states
+      const [morningEntries, setMorningEntries] = React.useState([]);
+      const [wakeTime, setWakeTime] = React.useState('');
+      const [firstAlarm, setFirstAlarm] = React.useState('');
+      const [habit, setHabit] = React.useState('');
+      const [customHabit, setCustomHabit] = React.useState('');
+      const [showCustomInput, setShowCustomInput] = React.useState(false);
+      const [habits, setHabits] = React.useState(['2k run', 'Stretching', 'Abs', 'None']);
+      const [showCat, setShowCat] = React.useState(false);
+      
+      // Night states
+      const [nightEntries, setNightEntries] = React.useState([]);
+      const [howWasToday, setHowWasToday] = React.useState('');
+      const [feelings, setFeelings] = React.useState([]);
+      const [feelingsOptions, setFeelingsOptions] = React.useState(['Happy', 'Stressed', 'Energized', 'Tired', 'Calm', 'Anxious', 'Proud', 'Frustrated']);
+      const [customFeeling, setCustomFeeling] = React.useState('');
+      const [showCustomFeeling, setShowCustomFeeling] = React.useState(false);
+      
+      const [movement, setMovement] = React.useState([]);
+      const [movementOptions, setMovementOptions] = React.useState(['Spin', 'Walk', 'Longer Run', 'Stretch', 'Strength', 'Gym Class']);
+      const [customMovement, setCustomMovement] = React.useState('');
+      const [showCustomMovement, setShowCustomMovement] = React.useState(false);
+      
+      const [soul, setSoul] = React.useState([]);
+      const [soulOptions, setSoulOptions] = React.useState(['Reading', 'Interesting Show', 'Read the news', 'Yummy food', 'Social connection']);
+      const [customSoul, setCustomSoul] = React.useState('');
+      const [showCustomSoul, setShowCustomSoul] = React.useState(false);
+      
+      const [accomplished, setAccomplished] = React.useState('');
+      const [tomorrowWakeTime, setTomorrowWakeTime] = React.useState('');
+      
+      const [loading, setLoading] = React.useState(true);
+      const [activeTab, setActiveTab] = React.useState('morning');
+
+      React.useEffect(() => {
+        loadAllData();
+      }, []);
+
+      const loadAllData = () => {
+        loadMorningEntries();
+        loadNightEntries();
+        loadCustomHabits();
+        loadCustomOptions();
+        setLoading(false);
+      };
+
+      const loadCustomHabits = () => {
+        try {
+          const stored = localStorage.getItem('custom-habits');
+          if (stored) {
+            const customHabits = JSON.parse(stored);
+            setHabits(prev => [...new Set([...prev, ...customHabits])]);
+          }
+        } catch (error) {
+          console.log('No custom habits yet');
+        }
+      };
+
+      const loadCustomOptions = () => {
+        try {
+          const feelingsStored = localStorage.getItem('custom-feelings');
+          if (feelingsStored) {
+            const custom = JSON.parse(feelingsStored);
+            setFeelingsOptions(prev => [...new Set([...prev, ...custom])]);
+          }
+          
+          const movementStored = localStorage.getItem('custom-movement');
+          if (movementStored) {
+            const custom = JSON.parse(movementStored);
+            setMovementOptions(prev => [...new Set([...prev, ...custom])]);
+          }
+          
+          const soulStored = localStorage.getItem('custom-soul');
+          if (soulStored) {
+            const custom = JSON.parse(soulStored);
+            setSoulOptions(prev => [...new Set([...prev, ...custom])]);
+          }
+        } catch (error) {
+          console.log('No custom options yet');
+        }
+      };
+
+      const saveCustomHabits = (newHabits) => {
+        try {
+          const customHabits = newHabits.filter(h => !['2k run', 'Stretching', 'Abs', 'None'].includes(h));
+          localStorage.setItem('custom-habits', JSON.stringify(customHabits));
+        } catch (error) {
+          console.log('Failed to save custom habits');
+        }
+      };
+
+      const loadMorningEntries = () => {
+        try {
+          const keys = Object.keys(localStorage).filter(key => key.startsWith('morning:'));
+          const loaded = keys.map(key => {
+            try {
+              return JSON.parse(localStorage.getItem(key));
+            } catch {
+              return null;
+            }
+          }).filter(e => e);
+          
+          setMorningEntries(loaded.sort((a, b) => 
+            new Date(b.date) - new Date(a.date)
+          ));
+        } catch (error) {
+          console.log('No morning entries yet');
+        }
+      };
+
+      const loadNightEntries = () => {
+        try {
+          const keys = Object.keys(localStorage).filter(key => key.startsWith('night:'));
+          const loaded = keys.map(key => {
+            try {
+              return JSON.parse(localStorage.getItem(key));
+            } catch {
+              return null;
+            }
+          }).filter(e => e);
+          
+          setNightEntries(loaded.sort((a, b) => 
+            new Date(b.date) - new Date(a.date)
+          ));
+        } catch (error) {
+          console.log('No night entries yet');
+        }
+      };
+
+      const addMorningEntry = () => {
+        let finalHabit = habit;
+        
+        if (habit === 'other') {
+          if (!customHabit.trim()) {
+            alert('Please enter your custom activity');
+            return;
+          }
+          finalHabit = customHabit.trim();
+          
+          if (!habits.includes(finalHabit)) {
+            const updatedHabits = [...habits, finalHabit];
+            setHabits(updatedHabits);
+            saveCustomHabits(updatedHabits);
+          }
+        }
+        
+        if (!wakeTime || !firstAlarm || !finalHabit) {
+          alert('Please fill in all fields');
+          return;
+        }
+
+        const newEntry = {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          wakeTime,
+          firstAlarm,
+          habit: finalHabit
+        };
+
+        try {
+          localStorage.setItem(`morning:${newEntry.id}`, JSON.stringify(newEntry));
+          setMorningEntries([newEntry, ...morningEntries]);
+          setWakeTime('');
+          setFirstAlarm('');
+          setHabit('');
+          setCustomHabit('');
+          setShowCustomInput(false);
+          setShowCat(false);
+        } catch (error) {
+          alert('Failed to save entry');
+        }
+      };
+
+      const addNightEntry = () => {
+        // Handle custom options
+        let finalFeelings = [...feelings];
+        if (showCustomFeeling && customFeeling.trim()) {
+          finalFeelings.push(customFeeling.trim());
+          if (!feelingsOptions.includes(customFeeling.trim())) {
+            const updated = [...feelingsOptions, customFeeling.trim()];
+            setFeelingsOptions(updated);
+            localStorage.setItem('custom-feelings', JSON.stringify(updated.filter(f => !['Happy', 'Stressed', 'Energized', 'Tired', 'Calm', 'Anxious', 'Proud', 'Frustrated'].includes(f))));
+          }
+        }
+        
+        let finalMovement = [...movement];
+        if (showCustomMovement && customMovement.trim()) {
+          finalMovement.push(customMovement.trim());
+          if (!movementOptions.includes(customMovement.trim())) {
+            const updated = [...movementOptions, customMovement.trim()];
+            setMovementOptions(updated);
+            localStorage.setItem('custom-movement', JSON.stringify(updated.filter(m => !['Spin', 'Walk', 'Longer Run', 'Stretch', 'Strength', 'Gym Class'].includes(m))));
+          }
+        }
+        
+        let finalSoul = [...soul];
+        if (showCustomSoul && customSoul.trim()) {
+          finalSoul.push(customSoul.trim());
+          if (!soulOptions.includes(customSoul.trim())) {
+            const updated = [...soulOptions, customSoul.trim()];
+            setSoulOptions(updated);
+            localStorage.setItem('custom-soul', JSON.stringify(updated.filter(s => !['Reading', 'Interesting Show', 'Read the news', 'Yummy food', 'Social connection'].includes(s))));
+          }
+        }
+        
+        if (!howWasToday.trim() || finalFeelings.length === 0 || finalMovement.length === 0 || finalSoul.length === 0 || !accomplished.trim() || !tomorrowWakeTime) {
+          alert('Please fill in all fields');
+          return;
+        }
+
+        const newEntry = {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          howWasToday,
+          feelings: finalFeelings,
+          movement: finalMovement,
+          soul: finalSoul,
+          accomplished,
+          tomorrowWakeTime
+        };
+
+        try {
+          localStorage.setItem(`night:${newEntry.id}`, JSON.stringify(newEntry));
+          setNightEntries([newEntry, ...nightEntries]);
+          setHowWasToday('');
+          setFeelings([]);
+          setMovement([]);
+          setSoul([]);
+          setAccomplished('');
+          setTomorrowWakeTime('');
+          setCustomFeeling('');
+          setCustomMovement('');
+          setCustomSoul('');
+          setShowCustomFeeling(false);
+          setShowCustomMovement(false);
+          setShowCustomSoul(false);
+        } catch (error) {
+          alert('Failed to save entry');
+        }
+      };
+
+      const deleteMorningEntry = (id) => {
+        try {
+          localStorage.removeItem(`morning:${id}`);
+          setMorningEntries(morningEntries.filter(e => e.id !== id));
+        } catch (error) {
+          alert('Failed to delete entry');
+        }
+      };
+
+      const deleteNightEntry = (id) => {
+        try {
+          localStorage.removeItem(`night:${id}`);
+          setNightEntries(nightEntries.filter(e => e.id !== id));
+        } catch (error) {
+          alert('Failed to delete entry');
+        }
+      };
+
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+          weekday: 'short', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+      };
+
+      const toggleMultiSelect = (value, currentArray, setter) => {
+        if (value === 'other') {
+          if (currentArray === feelings) setShowCustomFeeling(!showCustomFeeling);
+          if (currentArray === movement) setShowCustomMovement(!showCustomMovement);
+          if (currentArray === soul) setShowCustomSoul(!showCustomSoul);
+          return;
+        }
+        
+        if (currentArray.includes(value)) {
+          setter(currentArray.filter(v => v !== value));
+        } else {
+          setter([...currentArray, value]);
+        }
+      };
+
+      if (loading) {
+        return React.createElement('div', {
+          className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center'
+        }, React.createElement('div', {
+          className: 'text-lg text-indigo-600'
+        }, 'Loading...'));
+      }
+
+      return React.createElement('div', {
+        className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 pb-20'
+      },
+        React.createElement('div', { className: 'max-w-md mx-auto' },
+          // Header
+          React.createElement('div', { className: 'text-center mb-6 mt-6' },
+            React.createElement('h1', { className: 'text-3xl font-bold text-gray-800' }, 'Daily Tracker'),
+            React.createElement('p', { className: 'text-gray-600 mt-1' }, 'Track your day & night')
+          ),
+          
+          // Tabs
+          React.createElement('div', { className: 'flex gap-2 mb-6' },
+            React.createElement('button', {
+              onClick: () => setActiveTab('morning'),
+              className: `flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'morning'
+                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
+                  : 'bg-white text-gray-600 hover:bg-gray-50'
+              }`
+            },
+              React.createElement(lucide.Sun, { size: 20 }),
+              'Morning'
+            ),
+            React.createElement('button', {
+              onClick: () => setActiveTab('night'),
+              className: `flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'night'
+                  ? 'bg-indigo-600 text-white shadow-lg'
+                  : 'bg-white text-gray-600 hover:bg-gray-50'
+              }`
+            },
+              React.createElement(lucide.Moon, { size: 20 }),
+              'Night'
+            )
+          ),
+          
+          // Morning Tab
+          activeTab === 'morning' && React.createElement(React.Fragment, null,
+            React.createElement('div', { className: 'bg-white rounded-2xl shadow-lg p-6 mb-6' },
+              React.createElement('div', { className: 'space-y-4' },
+                // Get up time
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'flex items-center text-sm font-medium text-gray-700 mb-2' },
+                    React.createElement(lucide.Clock, { size: 16, className: 'mr-2 text-indigo-500' }),
+                    'Get up time'
+                  ),
+                  React.createElement('input', {
+                    type: 'time',
+                    value: wakeTime,
+                    onChange: (e) => setWakeTime(e.target.value),
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg'
+                  })
+                ),
+                
+                // First alarm
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'flex items-center text-sm font-medium text-gray-700 mb-2' },
+                    React.createElement(lucide.Sun, { size: 16, className: 'mr-2 text-indigo-500' }),
+                    'Got up on first alarm?'
+                  ),
+                  React.createElement('div', { className: 'flex gap-3' },
+                    React.createElement('button', {
+                      type: 'button',
+                      onClick: () => {
+                        setFirstAlarm('yes');
+                        setShowCat(true);
+                      },
+                      className: `flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+                        firstAlarm === 'yes'
+                          ? 'bg-green-500 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`
+                    }, 'Yes ✓'),
+                    React.createElement('button', {
+                      type: 'button',
+                      onClick: () => {
+                        setFirstAlarm('no');
+                        setShowCat(false);
+                      },
+                      className: `flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+                        firstAlarm === 'no'
+                          ? 'bg-red-500 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`
+                    }, 'No ✗')
+                  ),
+                  showCat && React.createElement('div', { className: 'mt-4 text-center' },
+                    React.createElement('img', {
+                      src: 'https://cataas.com/cat?t=success',
+                      alt: 'Good job cat!',
+                      className: 'w-full rounded-xl shadow-lg'
+                    }),
+                    React.createElement('p', { className: 'text-sm text-green-600 font-semibold mt-2' }, 'Nice work! 🎉')
+                  )
+                ),
+                
+                // How did you start today
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'flex items-center text-sm font-medium text-gray-700 mb-2' },
+                    React.createElement(lucide.Coffee, { size: 16, className: 'mr-2 text-indigo-500' }),
+                    'How did you start today?'
+                  ),
+                  React.createElement('select', {
+                    value: habit,
+                    onChange: (e) => {
+                      setHabit(e.target.value);
+                      setShowCustomInput(e.target.value === 'other');
+                    },
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg'
+                  },
+                    React.createElement('option', { value: '' }, 'Select an activity...'),
+                    habits.map(h => React.createElement('option', { key: h, value: h }, h)),
+                    React.createElement('option', { value: 'other' }, 'Other...')
+                  ),
+                  showCustomInput && React.createElement('input', {
+                    type: 'text',
+                    value: customHabit,
+                    onChange: (e) => setCustomHabit(e.target.value),
+                    placeholder: 'Enter your activity',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg mt-2'
+                  })
+                ),
+                
+                // Log button
+                React.createElement('button', {
+                  onClick: addMorningEntry,
+                  className: 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors'
+                },
+                  React.createElement(lucide.Plus, { size: 20 }),
+                  'Log Morning'
+                )
+              )
+            ),
+            
+            // Morning history
+            React.createElement('div', { className: 'space-y-3' },
+              React.createElement('h2', { className: 'text-xl font-bold text-gray-800 mb-3' }, 'Morning History'),
+              morningEntries.length === 0
+                ? React.createElement('div', { className: 'bg-white rounded-xl p-8 text-center text-gray-500' }, 'No morning entries yet!')
+                : morningEntries.map(entry => 
+                    React.createElement('div', {
+                      key: entry.id,
+                      className: 'bg-white rounded-xl shadow p-4 flex justify-between items-center'
+                    },
+                      React.createElement('div', null,
+                        React.createElement('div', { className: 'font-semibold text-gray-800' }, formatDate(entry.date)),
+                        React.createElement('div', { className: 'text-sm text-gray-600 mt-1' },
+                          `🕐 ${entry.wakeTime} • ${entry.firstAlarm === 'yes' ? '✓' : '✗'} First alarm • ${entry.habit}`
+                        )
+                      ),
+                      React.createElement('button', {
+                        onClick: () => deleteMorningEntry(entry.id),
+                        className: 'text-red-500 hover:text-red-700 text-sm font-medium'
+                      }, 'Delete')
+                    )
+                  )
+            )
+          ),
+          
+          // Night Tab
+          activeTab === 'night' && React.createElement(React.Fragment, null,
+            React.createElement('div', { className: 'bg-white rounded-2xl shadow-lg p-6 mb-6' },
+              React.createElement('div', { className: 'space-y-4' },
+                // How was today
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'text-sm font-medium text-gray-700 mb-2 block' }, 'How was today?'),
+                  React.createElement('textarea', {
+                    value: howWasToday,
+                    onChange: (e) => setHowWasToday(e.target.value),
+                    placeholder: 'Share about your day...',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg resize-none',
+                    rows: 3
+                  })
+                ),
+                
+                // Feelings
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'text-sm font-medium text-gray-700 mb-2 block' },
+                    'How did you feel? ',
+                    React.createElement('span', { className: 'text-xs text-gray-500' }, '(select all that apply)')
+                  ),
+                  React.createElement('div', { className: 'flex flex-wrap gap-2' },
+                    feelingsOptions.map(feeling =>
+                      React.createElement('button', {
+                        key: feeling,
+                        type: 'button',
+                        onClick: () => toggleMultiSelect(feeling, feelings, setFeelings),
+                        className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          feelings.includes(feeling)
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`
+                      }, feeling)
+                    ),
+                    React.createElement('button', {
+                      type: 'button',
+                      onClick: () => setShowCustomFeeling(!showCustomFeeling),
+                      className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        showCustomFeeling
+                          ? 'bg-indigo-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`
+                    }, 'Other...')
+                  ),
+                  showCustomFeeling && React.createElement('input', {
+                    type: 'text',
+                    value: customFeeling,
+                    onChange: (e) => setCustomFeeling(e.target.value),
+                    placeholder: 'Enter your feeling',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg mt-2'
+                  })
+                ),
+                
+                // Movement
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'text-sm font-medium text-gray-700 mb-2 block' },
+                    'How did you move your body today? ',
+                    React.createElement('span', { className: 'text-xs text-gray-500' }, '(select all that apply)')
+                  ),
+                  React.createElement('div', { className: 'flex flex-wrap gap-2' },
+                    movementOptions.map(move =>
+                      React.createElement('button', {
+                        key: move,
+                        type: 'button',
+                        onClick: () => toggleMultiSelect(move, movement, setMovement),
+                        className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          movement.includes(move)
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`
+                      }, move)
+                    ),
+                    React.createElement('button', {
+                      type: 'button',
+                      onClick: () => setShowCustomMovement(!showCustomMovement),
+                      className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        showCustomMovement
+                          ? 'bg-indigo-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`
+                    }, 'Other...')
+                  ),
+                  showCustomMovement && React.createElement('input', {
+                    type: 'text',
+                    value: customMovement,
+                    onChange: (e) => setCustomMovement(e.target.value),
+                    placeholder: 'Enter your movement',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg mt-2'
+                  })
+                ),
+                
+                // Soul
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'text-sm font-medium text-gray-700 mb-2 block' },
+                    'How did you feed your soul today? ',
+                    React.createElement('span', { className: 'text-xs text-gray-500' }, '(select all that apply)')
+                  ),
+                  React.createElement('div', { className: 'flex flex-wrap gap-2' },
+                    soulOptions.map(item =>
+                      React.createElement('button', {
+                        key: item,
+                        type: 'button',
+                        onClick: () => toggleMultiSelect(item, soul, setSoul),
+                        className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          soul.includes(item)
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`
+                      }, item)
+                    ),
+                    React.createElement('button', {
+                      type: 'button',
+                      onClick: () => setShowCustomSoul(!showCustomSoul),
+                      className: `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        showCustomSoul
+                          ? 'bg-indigo-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`
+                    }, 'Other...')
+                  ),
+                  showCustomSoul && React.createElement('input', {
+                    type: 'text',
+                    value: customSoul,
+                    onChange: (e) => setCustomSoul(e.target.value),
+                    placeholder: 'Enter soul food',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg mt-2'
+                  })
+                ),
+                
+                // Accomplished
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'text-sm font-medium text-gray-700 mb-2 block' }, 'How did you feel accomplished today?'),
+                  React.createElement('textarea', {
+                    value: accomplished,
+                    onChange: (e) => setAccomplished(e.target.value),
+                    placeholder: 'What made you proud today...',
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg resize-none',
+                    rows: 3
+                  })
+                ),
+                
+                // Tomorrow wake time
+                React.createElement('div', null,
+                  React.createElement('label', { className: 'flex items-center text-sm font-medium text-gray-700 mb-2' },
+                    React.createElement(lucide.Clock, { size: 16, className: 'mr-2 text-indigo-500' }),
+                    'What time do you want to get up tomorrow?'
+                  ),
+                  React.createElement('input', {
+                    type: 'time',
+                    value: tomorrowWakeTime,
+                    onChange: (e) => setTomorrowWakeTime(e.target.value),
+                    className: 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg'
+                  })
+                ),
+                
+                // Log button
+                React.createElement('button', {
+                  onClick: addNightEntry,
+                  className: 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors'
+                },
+                  React.createElement(lucide.Plus, { size: 20 }),
+                  'Log Night'
+                )
+              )
+            ),
+            
+            // Night history
+            React.createElement('div', { className: 'space-y-3' },
+              React.createElement('h2', { className: 'text-xl font-bold text-gray-800 mb-3' }, 'Night History'),
+              nightEntries.length === 0
+                ? React.createElement('div', { className: 'bg-white rounded-xl p-8 text-center text-gray-500' }, 'No night entries yet!')
+                : nightEntries.map(entry =>
+                    React.createElement('div', {
+                      key: entry.id,
+                      className: 'bg-white rounded-xl shadow p-4'
+                      },
+React.createElement('div', { className: 'flex justify-between items-start mb-2' },
+React.createElement('div', { className: 'font-semibold text-gray-800' }, formatDate(entry.date)),
+React.createElement('button', {
+onClick: () => deleteNightEntry(entry.id),
+className: 'text-red-500 hover:text-red-700 text-sm font-medium'
+}, 'Delete')
+),
+React.createElement('div', { className: 'text-sm text-gray-600 space-y-1' },
+React.createElement('div', null, React.createElement('strong', null, 'Today: '), entry.howWasToday),
+React.createElement('div', null, React.createElement('strong', null, 'Feelings: '), entry.feelings.join(', ')),
+React.createElement('div', null, React.createElement('strong', null, 'Movement: '), entry.movement.join(', ')),
+React.createElement('div', null, React.createElement('strong', null, 'Soul: '), entry.soul.join(', ')),
+React.createElement('div', null, React.createElement('strong', null, 'Accomplished: '), entry.accomplished),
+React.createElement('div', null, React.createElement('strong', null, 'Tomorrow wake: '), entry.tomorrowWakeTime)
+)
+)
+)
+)
+)
+)
+);
+}
+ReactDOM.render(
+  React.createElement(HealthTracker),
+  document.getElementById('root')
+);
+  </script>
 </body>
 </html>
