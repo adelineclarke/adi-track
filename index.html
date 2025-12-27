@@ -11,8 +11,52 @@
 </head>
 <body>
   <div id="root"></div>
+  
   <script type="text/babel">
-    import { Plus, Clock, Coffee, Sun, Moon } from 'https://cdn.jsdelivr.net/npm/lucide-react@0.263.1/+esm';
+    // Lucide icons - using CDN components
+    const Plus = ({ className, size = 24 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    );
+
+    const Clock = ({ className, size = 24 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    );
+
+    const Coffee = ({ className, size = 24 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+        <line x1="6" y1="1" x2="6" y2="4"></line>
+        <line x1="10" y1="1" x2="10" y2="4"></line>
+        <line x1="14" y1="1" x2="14" y2="4"></line>
+      </svg>
+    );
+
+    const Sun = ({ className, size = 24 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+    );
+
+    const Moon = ({ className, size = 24 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    );
 
     function HealthTracker() {
       // Morning states
@@ -322,7 +366,7 @@
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Sun className="w-5 h-5" />
+                <Sun size={20} />
                 Morning
               </button>
               <button
@@ -333,7 +377,7 @@
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Moon className="w-5 h-5" />
+                <Moon size={20} />
                 Night
               </button>
             </div>
@@ -344,7 +388,7 @@
                   <div className="space-y-4">
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Clock className="w-4 h-4 mr-2 text-indigo-500" />
+                        <Clock size={16} className="mr-2 text-indigo-500" />
                         Get up time
                       </label>
                       <input
@@ -357,7 +401,7 @@
 
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Sun className="w-4 h-4 mr-2 text-indigo-500" />
+                        <Sun size={16} className="mr-2 text-indigo-500" />
                         Got up on first alarm?
                       </label>
                       <div className="flex gap-3">
@@ -405,7 +449,7 @@
 
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Coffee className="w-4 h-4 mr-2 text-indigo-500" />
+                        <Coffee size={16} className="mr-2 text-indigo-500" />
                         How did you start today?
                       </label>
                       <select
@@ -438,7 +482,7 @@
                       onClick={addMorningEntry}
                       className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
                     >
-                      <Plus className="w-5 h-5" />
+                      <Plus size={20} />
                       Log Morning
                     </button>
                   </div>
@@ -629,78 +673,74 @@
                         value={accomplished}
                         onChange={(e) => setAccomplished(e.target.value)}
                         placeholder="What made you proud today..."
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg resize-none"
-                        rows="3"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Clock className="w-4 h-4 mr-2 text-indigo-500" />
-                        What time do you want to get up tomorrow?
-                      </label>
-                      <input
-                        type="time"
-                        value={tomorrowWakeTime}
-                        onChange={(e) => setTomorrowWakeTime(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
-                      />
-                    </div>
-
-                    <button
-                      onClick={addNightEntry}
-                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
-                    >
-                      <Plus className="w-5 h-5" />
-                      Log Night
-                    </button>
-                  </div>
+className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg resize-none"
+rows="3"
+/>
+</div>
+                      <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <Clock size={16} className="mr-2 text-indigo-500" />
+                    What time do you want to get up tomorrow?
+                  </label>
+                  <input
+                    type="time"
+                    value={tomorrowWakeTime}
+                    onChange={(e) => setTomorrowWakeTime(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
+                  />
                 </div>
 
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-gray-800 mb-3">Night History</h2>
-                  
-                  {nightEntries.length === 0 ? (
-                    <div className="bg-white rounded-xl p-8 text-center text-gray-500">
-                      No night entries yet!
-                    </div>
-                  ) : (
-                    nightEntries.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className="bg-white rounded-xl shadow p-4"
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="font-semibold text-gray-800">
-                            {formatDate(entry.date)}
-                          </div>
-                          <button
-                            onClick={() => deleteNightEntry(entry.id)}
-                            className="text-red-500 hover:text-red-700 text-sm font-medium"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                        <div className="text-sm text-gray-600 space-y-1">
-                          <div><strong>Today:</strong> {entry.howWasToday}</div>
-                          <div><strong>Feelings:</strong> {entry.feelings.join(', ')}</div>
-                          <div><strong>Movement:</strong> {entry.movement.join(', ')}</div>
-                          <div><strong>Soul:</strong> {entry.soul.join(', ')}</div>
-                          <div><strong>Accomplished:</strong> {entry.accomplished}</div>
-                          <div><strong>Tomorrow wake:</strong> {entry.tomorrowWakeTime}</div>
-                        </div>
+                <button
+                  onClick={addNightEntry}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Plus size={20} />
+                  Log Night
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h2 className="text-xl font-bold text-gray-800 mb-3">Night History</h2>
+              
+              {nightEntries.length === 0 ? (
+                <div className="bg-white rounded-xl p-8 text-center text-gray-500">
+                  No night entries yet!
+                </div>
+              ) : (
+                nightEntries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="bg-white rounded-xl shadow p-4"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-semibold text-gray-800">
+                        {formatDate(entry.date)}
                       </div>
-                    ))
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      );
-    }
+                      <button
+                        onClick={() => deleteNightEntry(entry.id)}
+                        className="text-red-500 hover:text-red-700 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div><strong>Today:</strong> {entry.howWasToday}</div>
+                      <div><strong>Feelings:</strong> {entry.feelings.join(', ')}</div>
+                      <div><strong>Movement:</strong> {entry.movement.join(', ')}</div>
+                      <div><strong>Soul:</strong> {entry.soul.join(', ')}</div>
+                      <div><strong>Accomplished:</strong> {entry.accomplished}</div>
+                      <div><strong>Tomorrow wake:</strong> {entry.tomorrowWakeTime}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
-    ReactDOM.render(<HealthTracker />, document.getElementById('root'));
-  </script>
-</body>
-</html>
+ReactDOM.render(<HealthTracker />, document.getElementById('root'));
