@@ -13,87 +13,51 @@
   <div id="root"></div>
   
   <script type="text/babel">
-    // Lucide icons - using CDN components
-    const Plus = ({ className, size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-    );
+    const { useState, useEffect } = React;
 
-    const Clock = ({ className, size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-      </svg>
-    );
-
-    const Coffee = ({ className, size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-        <line x1="6" y1="1" x2="6" y2="4"></line>
-        <line x1="10" y1="1" x2="10" y2="4"></line>
-        <line x1="14" y1="1" x2="14" y2="4"></line>
-      </svg>
-    );
-
-    const Sun = ({ className, size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
-    );
-
-    const Moon = ({ className, size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    );
+    // Simple icon components
+    const Plus = () => <span>+</span>;
+    const Clock = () => <span>🕐</span>;
+    const Coffee = () => <span>☕</span>;
+    const Sun = () => <span>☀️</span>;
+    const Moon = () => <span>🌙</span>;
 
     function HealthTracker() {
       // Morning states
-      const [morningEntries, setMorningEntries] = React.useState([]);
-      const [wakeTime, setWakeTime] = React.useState('');
-      const [firstAlarm, setFirstAlarm] = React.useState('');
-      const [habit, setHabit] = React.useState('');
-      const [customHabit, setCustomHabit] = React.useState('');
-      const [showCustomInput, setShowCustomInput] = React.useState(false);
-      const [habits, setHabits] = React.useState(['2k run', 'Stretching', 'Abs', 'None']);
-      const [showCat, setShowCat] = React.useState(false);
+      const [morningEntries, setMorningEntries] = useState([]);
+      const [wakeTime, setWakeTime] = useState('');
+      const [firstAlarm, setFirstAlarm] = useState('');
+      const [habit, setHabit] = useState('');
+      const [customHabit, setCustomHabit] = useState('');
+      const [showCustomInput, setShowCustomInput] = useState(false);
+      const [habits, setHabits] = useState(['2k run', 'Stretching', 'Abs', 'None']);
+      const [showCat, setShowCat] = useState(false);
       
       // Night states
-      const [nightEntries, setNightEntries] = React.useState([]);
-      const [howWasToday, setHowWasToday] = React.useState('');
-      const [feelings, setFeelings] = React.useState([]);
-      const [feelingsOptions, setFeelingsOptions] = React.useState(['Happy', 'Stressed', 'Energized', 'Tired', 'Calm', 'Anxious', 'Proud', 'Frustrated']);
-      const [customFeeling, setCustomFeeling] = React.useState('');
-      const [showCustomFeeling, setShowCustomFeeling] = React.useState(false);
+      const [nightEntries, setNightEntries] = useState([]);
+      const [howWasToday, setHowWasToday] = useState('');
+      const [feelings, setFeelings] = useState([]);
+      const [feelingsOptions, setFeelingsOptions] = useState(['Happy', 'Stressed', 'Energized', 'Tired', 'Calm', 'Anxious', 'Proud', 'Frustrated']);
+      const [customFeeling, setCustomFeeling] = useState('');
+      const [showCustomFeeling, setShowCustomFeeling] = useState(false);
       
-      const [movement, setMovement] = React.useState([]);
-      const [movementOptions, setMovementOptions] = React.useState(['Spin', 'Walk', 'Longer Run', 'Stretch', 'Strength', 'Gym Class']);
-      const [customMovement, setCustomMovement] = React.useState('');
-      const [showCustomMovement, setShowCustomMovement] = React.useState(false);
+      const [movement, setMovement] = useState([]);
+      const [movementOptions, setMovementOptions] = useState(['Spin', 'Walk', 'Longer Run', 'Stretch', 'Strength', 'Gym Class']);
+      const [customMovement, setCustomMovement] = useState('');
+      const [showCustomMovement, setShowCustomMovement] = useState(false);
       
-      const [soul, setSoul] = React.useState([]);
-      const [soulOptions, setSoulOptions] = React.useState(['Reading', 'Interesting Show', 'Read the news', 'Yummy food', 'Social connection']);
-      const [customSoul, setCustomSoul] = React.useState('');
-      const [showCustomSoul, setShowCustomSoul] = React.useState(false);
+      const [soul, setSoul] = useState([]);
+      const [soulOptions, setSoulOptions] = useState(['Reading', 'Interesting Show', 'Read the news', 'Yummy food', 'Social connection']);
+      const [customSoul, setCustomSoul] = useState('');
+      const [showCustomSoul, setShowCustomSoul] = useState(false);
       
-      const [accomplished, setAccomplished] = React.useState('');
-      const [tomorrowWakeTime, setTomorrowWakeTime] = React.useState('');
+      const [accomplished, setAccomplished] = useState('');
+      const [tomorrowWakeTime, setTomorrowWakeTime] = useState('');
       
-      const [loading, setLoading] = React.useState(true);
-      const [activeTab, setActiveTab] = React.useState('morning');
+      const [loading, setLoading] = useState(true);
+      const [activeTab, setActiveTab] = useState('morning');
 
-      React.useEffect(() => {
+      useEffect(() => {
         loadAllData();
       }, []);
 
@@ -366,7 +330,7 @@
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Sun size={20} />
+                <Sun />
                 Morning
               </button>
               <button
@@ -377,7 +341,7 @@
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Moon size={20} />
+                <Moon />
                 Night
               </button>
             </div>
@@ -388,8 +352,7 @@
                   <div className="space-y-4">
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Clock size={16} className="mr-2 text-indigo-500" />
-                        Get up time
+                        <Clock /> Get up time
                       </label>
                       <input
                         type="time"
@@ -401,8 +364,7 @@
 
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Sun size={16} className="mr-2 text-indigo-500" />
-                        Got up on first alarm?
+                        <Sun /> Got up on first alarm?
                       </label>
                       <div className="flex gap-3">
                         <button
@@ -449,8 +411,7 @@
 
                     <div>
                       <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                        <Coffee size={16} className="mr-2 text-indigo-500" />
-                        How did you start today?
+                        <Coffee /> How did you start today?
                       </label>
                       <select
                         value={habit}
@@ -482,7 +443,7 @@
                       onClick={addMorningEntry}
                       className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
                     >
-                      <Plus size={20} />
+                      <Plus />
                       Log Morning
                     </button>
                   </div>
@@ -677,69 +638,73 @@
                         rows="3"
                       />
                     </div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Clock size={16} className="mr-2 text-indigo-500" />
-                    What time do you want to get up tomorrow?
-                  </label>
-                  <input
-                    type="time"
-                    value={tomorrowWakeTime}
-                    onChange={(e) => setTomorrowWakeTime(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
-                  />
-                </div>
 
-                <button
-                  onClick={addNightEntry}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
-                >
-                  <Plus size={20} />
-                  Log Night
-                </button>
-              </div>
-            </div>
+                    <div>
+                      <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                        <Clock /> What time do you want to get up tomorrow?
+                      </label>
+                      <input
+                        type="time"
+                        value={tomorrowWakeTime}
+                        onChange={(e) => setTomorrowWakeTime(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
+                      />
+                    </div>
 
-            <div className="space-y-3">
-              <h2 className="text-xl font-bold text-gray-800 mb-3">Night History</h2>
-              
-              {nightEntries.length === 0 ? (
-                <div className="bg-white rounded-xl p-8 text-center text-gray-500">
-                  No night entries yet!
-                </div>
-              ) : (
-                nightEntries.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="bg-white rounded-xl shadow p-4"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="font-semibold text-gray-800">
-                        {formatDate(entry.date)}
-                      </div>
-                      <button
-                        onClick={() => deleteNightEntry(entry.id)}
-                        className="text-red-500 hover:text-red-700 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <div><strong>Today:</strong> {entry.howWasToday}</div>
-                      <div><strong>Feelings:</strong> {entry.feelings.join(', ')}</div>
-                      <div><strong>Movement:</strong> {entry.movement.join(', ')}</div>
-                      <div><strong>Soul:</strong> {entry.soul.join(', ')}</div>
-                      <div><strong>Accomplished:</strong> {entry.accomplished}</div>
-                      <div><strong>Tomorrow wake:</strong> {entry.tomorrowWakeTime}</div>
-                    </div>
+                    <button
+                      onClick={addNightEntry}
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <Plus />
+                      Log Night
+                    </button>
                   </div>
-                ))
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
+                </div>
 
-ReactDOM.render(<HealthTracker />, document.getElementById('root'));
+                <div className="space-y-3">
+                  <h2 className="text-xl font-bold text-gray-800 mb-3">Night History</h2>
+                  
+                  {nightEntries.length === 0 ? (
+                    <div className="bg-white rounded-xl p-8 text-center text-gray-500">
+                      No night entries yet!
+                    </div>
+                  ) : (
+                    nightEntries.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="bg-white rounded-xl shadow p-4"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="font-semibold text-gray-800">
+                            {formatDate(entry.date)}
+                          </div>
+                          <button
+                            onClick={() => deleteNightEntry(entry.id)}
+                            className="text-red-500 hover:text-red-700 text-sm font-medium"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <div><strong>Today:</strong> {entry.howWasToday}</div>
+                          <div><strong>Feelings:</strong> {entry.feelings.join(', ')}</div>
+                          <div><strong>Movement:</strong> {entry.movement.join(', ')}</div>
+                          <div><strong>Soul:</strong> {entry.soul.join(', ')}</div>
+                          <div><strong>Accomplished:</strong> {entry.accomplished}</div>
+                          <div><strong>Tomorrow wake:</strong> {entry.tomorrowWakeTime}</div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<HealthTracker />, document.getElementById('root'));
+  </script>
+</body>
+</html>
